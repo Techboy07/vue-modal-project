@@ -1,46 +1,40 @@
 <template>
-  <h1>{{ title }}</h1>
-  <!-- <input type="text" ref="numb" />
-  <button @click="handleClick">click me</button> -->
-  <div v-if="showModal">
-    <Modal theme="sale" @close="toggleModal">
-      <template v-slot:links>
-        <a href="#">sign up now</a>
-        <a href="#">more info</a>
-      </template>
-      <h1>{{ header }}</h1>
-      <p>{{ text }}</p>
-    </Modal>
-  </div>
-  <button @click="toggleModal">open modal</button>
+  <h1>Ninja Reaction Timer</h1>
+  <button @click="start" :disabled="isPlaying">play</button>
+  <Block v-if="isPlaying" :delay="delay" @end="endGame" />
+  <Results v-if="showResults" :score="score" />
 </template>
 
 <script>
-import Modal from "./components/Modal.vue";
+import Block from "./components/Block.vue";
+import Results from "./components/Results.vue";
 export default {
   name: "App",
   data() {
     return {
-      title: "welcome to vue3",
-      header: "Sign up for Giveaway!",
-      text: "grab your ninja swipee for half the price",
-      showModal: false,
+      isPlaying: false,
+      delay: null,
+      score: null,
+      showResults: false,
     };
   },
+
   methods: {
-    handleClick() {
-      const myInput = this.$refs.numb;
-      console.log(myInput);
-      myInput.classList.add("active");
-      myInput.focus();
+    start() {
+      this.delay = 2000 + Math.random() * 5000;
+      this.isPlaying = true;
+      this.showResults = false;
     },
-    toggleModal() {
-      this.showModal = !this.showModal;
+    endGame(reactionTime) {
+      this.score = reactionTime;
+      this.isPlaying = false;
+      this.showResults = true;
     },
   },
-  components: { Modal },
+  components: { Block, Results },
 };
 </script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -49,5 +43,21 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+button {
+  background: #0faf87;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin: 10px;
+}
+
+button[disabled] {
+  opacity: 0.2;
+  cursor: not-allowed;
 }
 </style>
